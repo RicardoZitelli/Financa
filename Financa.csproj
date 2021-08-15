@@ -10,6 +10,7 @@
     <Compile Remove="Data\Migrations\20210814183516_03.Designer.cs" />
     <Compile Remove="Data\Migrations\20210814204956_05.cs" />
     <Compile Remove="Data\Migrations\20210814204956_05.Designer.cs" />
+    <Compile Remove="Models\sp_TotalInvestidoEmpresa.cs" />
   </ItemGroup>
 
   <ItemGroup>

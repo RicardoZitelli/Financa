@@ -19,5 +19,6 @@ namespace Financa.Data
         public DbSet<EmpresaTipo> EmpresaTipos { get; set; }
         public DbSet<Investimento> Investimentos { get; set; }
         public DbSet<Provento> Proventos { get; set; }
+
     }
 }
