@@ -23,12 +23,14 @@ namespace Financa.Models
 
         public int Id { get; set; }
         [Required]
+        [DataType(DataType.Date)]
         [Display(Name="Data")]
         public DateTime DataFechamento { get; set; }        
         [Display(Name = "Valor da Carteira")]
         public decimal ValorCarteira { get; set; }
         [Display(Name = "Total Recebido")]
         public decimal TotalRecebido { get; set; }
+        [Display(Name = "Porcentagem Referente ao mês")]
         public decimal PorcentagemReferenteAoMes { get; set; }
     }
 }

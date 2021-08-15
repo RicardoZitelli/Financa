@@ -33,14 +33,16 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DataFechamento)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorCarteira)
+            <td>                
+                @{string parameterValue = @Html.FormatValue(item.ValorCarteira, "{0:C}"); }
+                @Html.DisplayFor(modelItem => parameterValue)
+            </td>
+            <td>                
+                @{parameterValue = @Html.FormatValue(item.TotalRecebido, "{0:C}"); }
+                @Html.DisplayFor(modelItem => parameterValue)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TotalRecebido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PorcentagemReferenteAoMes)
+                @Html.DisplayFor(modelItem => item.PorcentagemReferenteAoMes)%
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

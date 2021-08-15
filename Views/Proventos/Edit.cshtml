@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="PorcentagemReferenteAoMes" class="control-label"></label>
-                <input asp-for="PorcentagemReferenteAoMes" class="form-control" />
+                <input asp-for="PorcentagemReferenteAoMes" class="form-control" onfocus="porcentagem();"/>
                 <span asp-validation-for="PorcentagemReferenteAoMes" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -46,4 +46,14 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/lib/jquery-validation/dist/methods_pt.js"></script>
 }
+
+
+<script>
+    function porcentagem() {
+        var porcentagem = $("#TotalRecebido").val().toString().replace(',', '.') / $("#ValorCarteira").val().toString().replace(',', '.') * 100;
+
+        $("#PorcentagemReferenteAoMes").val(porcentagem.toString().replace('.', ',').substring(0, 4));
+    }
+</script>

@@ -19,20 +19,22 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ValorCarteira)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorCarteira)
+        <dd class="col-sm-10">
+            @{string parameterValue = @Html.FormatValue(Model.ValorCarteira, "{0:C}"); }
+            @Html.DisplayFor(modelItem => parameterValue)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.TotalRecebido)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TotalRecebido)
+        <dd class="col-sm-10">            
+            @{parameterValue = @Html.FormatValue(Model.TotalRecebido, "{0:C}"); }
+            @Html.DisplayFor(modelItem => parameterValue)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PorcentagemReferenteAoMes)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PorcentagemReferenteAoMes)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PorcentagemReferenteAoMes)%
         </dd>
     </dl>
 </div>
