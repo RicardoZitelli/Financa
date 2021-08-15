@@ -6,8 +6,23 @@
 
 <h1>Index</h1>
 
+<div>
+    Carregar investimentos de uma planilha Excel
+</div>
+
+
+<form enctype="multipart/form-data" method="post" asp-action="InsereViaExcel">
+    <dl>
+        <dd>
+            @Html.TextBox("file", "", new { type = "file" })
+        </dd>
+    </dl>
+    <input class="btn btn-primary" type="submit" value="Enviar" />
+</form>
+<br />
 <p>
     <a asp-action="Create">Create New</a>
+
 </p>
 <table class="table">
     <thead>
@@ -71,3 +86,5 @@
         }
     </tbody>
 </table>
+
+

@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Financa.Data;
 using Financa.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+
+using ExcelDataReader;
 
 namespace Financa.Controllers
 {
@@ -161,6 +165,113 @@ namespace Financa.Controllers
         private bool InvestimentoExists(int id)
         {
             return _context.Investimentos.Any(e => e.Id == id);
+        }
+
+        private bool InvestimentoExists(DateTime data, decimal precoCompra,Empresa empresa, Corretora corretora)
+        {
+            return _context.Investimentos.Any(e => e.Data == data && e.PrecoCompra == precoCompra && e.CorretoraId == corretora.Id && e.EmpresaId == empresa.Id);
+        }
+
+        [HttpPost]
+        public IActionResult InsereViaExcel(IFormFile file)
+        {
+            List<Investimento> investimentos = new List<Investimento>();
+            if (file.Length > 0)
+            {
+                // For .net core, the next line requires the NuGet package, 
+                //System.Text.Encoding.CodePages;
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                using (var stream = file.OpenReadStream())
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        bool cabecalho = true;
+
+                        while (reader.Read()) //Each row of the file
+                        {
+                            if (!cabecalho)
+                            {
+                                var corretora = _context.Corretoras.Where(c => c.Descricao == reader.GetValue(0).ToString()).FirstOrDefault();
+                                var empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue(1).ToString()).FirstOrDefault();
+
+                                empresa = GravaEmpresa(reader, empresa);
+                                corretora = GravaCorretora(reader, corretora);
+
+                                Investimento investimento = new Investimento()
+                                {
+                                    Id = 0,
+                                    Data = (DateTime)reader.GetValue(2),
+                                    Tipo = reader.GetValue(3).ToString(),
+                                    Quantidade = int.Parse(reader.GetValue(4).ToString()),
+                                    PrecoCompra = decimal.Parse(reader.GetValue(5).ToString()),
+                                    PrecoVenda = 0,
+                                    Corretagem = 0,
+                                    DataVenda = null,
+                                    CorretoraId = corretora.Id,
+                                    EmpresaId = empresa.Id,
+                                    Corretora = corretora,
+                                    Empresa = empresa
+                                };
+
+                                if (!InvestimentoExists(investimento.Data, investimento.PrecoCompra, investimento.Empresa, investimento.Corretora))
+                                {
+                                    investimentos.Add(investimento);
+                                }
+                            }
+
+                            cabecalho = false;
+                        }
+                    }
+                }
+
+                investimentos.ForEach(i => _context.Investimentos.Add(i));
+
+                _context.SaveChanges();
+            }
+                        
+            var applicationDbContext = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
+            return View(nameof(Index),applicationDbContext.ToList());
+        }
+
+        private Empresa GravaEmpresa(IExcelDataReader reader, Empresa empresa)
+        {
+            if (empresa == null)
+            {
+                empresa = new Empresa()
+                {
+                    Id = 0,
+                    Ticker = reader.GetValue(1).ToString(),
+                    Nome = reader.GetValue(1).ToString(),
+
+                };
+
+                _context.Add(empresa);
+                _context.SaveChanges();
+
+                empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue(1).ToString()).FirstOrDefault();
+            }
+
+            return empresa;
+        }
+
+        private Corretora GravaCorretora(IExcelDataReader reader, Corretora corretora)
+        {
+            if (corretora == null)
+            {
+                corretora = new Corretora()
+                {
+                    Id = 0,
+                    Descricao = reader.GetValue(1).ToString()
+                };
+
+                _context.Add(corretora);
+                _context.SaveChanges();
+
+                corretora = _context.Corretoras.Where(e => e.Descricao == reader.GetValue(1).ToString()).FirstOrDefault();
+            }
+
+            return corretora;
         }
     }
 }
