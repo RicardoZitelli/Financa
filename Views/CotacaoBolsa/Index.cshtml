@@ -1,0 +1,55 @@
+﻿@{
+
+}
+<div id="corpo">
+
+</div>
+
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script>
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+        return false;
+    };
+
+    var symbol = getUrlParameter('symbol');
+
+    $.getJSON("/CotacaoBolsa/Acao", { symbol: symbol })
+        .done(function (data) {
+            const obj = JSON.parse(data);
+
+            var corpo = "<table class='table'><tr>";
+            corpo += "<th>Ação</th>";
+            corpo += "<th>Preço</th>";
+            corpo += "</tr>";
+            corpo += "<tr>";
+            corpo += "<td>";
+            corpo += obj.results["" + symbol + ""].name;
+            corpo += "</td>";
+            corpo += "<td>";
+            corpo += "R$ " + obj.results["" + symbol + ""].price.toString().replace(".",",");
+            corpo += "</td>";
+            corpo += "</td></tr></table>";
+                        
+            document.getElementById("corpo").innerHTML = corpo;
+
+
+        });
+
+
+
+
+
+</script>
