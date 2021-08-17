@@ -29,22 +29,44 @@
     $.getJSON("/CotacaoBolsa/Acao", { symbol: symbol })
         .done(function (data) {
             const obj = JSON.parse(data);
+            const name = obj.results["" + symbol + ""].name;
+            const ticker = obj.results["" + symbol + ""].symbol;
+            const price = obj.results["" + symbol + ""].price;
+            const change_percent = obj.results["" + symbol + ""].change_percent;
 
             var corpo = "<table class='table'><tr>";
             corpo += "<th>Ação</th>";
+            corpo += "<th>Ticker</th>";
             corpo += "<th>Preço</th>";
+            corpo += "<th>Mudança Percentual</th>";
             corpo += "</tr>";
             corpo += "<tr>";
             corpo += "<td>";
-            corpo += obj.results["" + symbol + ""].name;
+            corpo += name;
             corpo += "</td>";
             corpo += "<td>";
-            corpo += "R$ " + obj.results["" + symbol + ""].price.toString().replace(".",",");
+            corpo += ticker;
             corpo += "</td>";
-            corpo += "</td></tr></table>";
-                        
-            document.getElementById("corpo").innerHTML = corpo;
+            corpo += "<td>";
+            corpo += "R$ " + price.toString().replace(".",",");
+            corpo += "</td>";
 
+            if (change_percent > 0)
+            {
+                corpo += "<td style='color:#155724;'>";
+                corpo += change_percent.toString().replace(".", ",") + "%";
+                corpo += "</td>";
+            }
+            else
+            {
+                corpo += "<td style='color:#721c24'>";
+                corpo += change_percent.toString().replace(".", ",") + "%";
+                corpo += "</td>";
+            }
+
+            corpo += "</td></tr></table>";
+            
+            $("#corpo").html(corpo);
 
         });
 
