@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+<link rel="stylesheet" href="~/css/site.css" />
 <h1>Index</h1>
 
 <div>
@@ -48,6 +48,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.PrecoCompra)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Acao.Bid)
+            </th>
 
             <th></th>
         </tr>
@@ -75,8 +78,13 @@
                     @Html.DisplayFor(modelItem => item.Quantidade)
                 </td>
                 <td>
-                    @{string parameterValue = @Html.FormatValue(item.PrecoCompra, "{0:C}"); }
+                    @{string parameterValue = @Html.FormatValue(item.PrecoCompra, "{0:C}");}
                     @Html.DisplayFor(modelItem => parameterValue)
+                </td>
+                <td class="@(item.Acao.RegularMarketChangePercent > 0 ? "success" : "danger")">
+                    @{ parameterValue = @Html.FormatValue(item.Acao.Bid, "{0:C}");
+                        parameterValue += " (" + item.Acao.RegularMarketChangePercent.ToString("n2") + "%)";}
+                    @Html.DisplayFor(modelItem => parameterValue);
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

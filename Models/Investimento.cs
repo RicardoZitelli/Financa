@@ -56,6 +56,8 @@ namespace Financa.Models
         public Empresa Empresa { get; set; }
         [NotMappedAttribute]
         public IFormFile FileUpload { get; set; }
+        [NotMapped]
+        public Acao Acao { get; set; }
 
 
     }

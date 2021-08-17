@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 
 using ExcelDataReader;
+using YahooFinanceApi;
 
 namespace Financa.Controllers
 {
@@ -23,10 +24,61 @@ namespace Financa.Controllers
             _context = context;
         }
 
+        public async Task<Acao> getStockData(string symbol)
+        {
+            Acao acao = new Acao();
+
+            try
+            {
+                //string ticker = Request.Query["symbol"];
+                string ticker = symbol;
+
+                string param = ticker + ".SA";
+
+                var security = await Yahoo.Symbols(param).QueryAsync();
+
+                List<Security> securities = security.Values.ToList();
+
+                foreach (var item in securities)
+                {
+                    acao.Ask = item.Ask;
+                    acao.Bid = item.Bid;
+                    acao.NameCompany = item.LongName;
+                    acao.ShortName = item.ShortName;
+                    acao.Symbol = item.Symbol;
+                    acao.Ticker = ticker;
+                    acao.RegularMarketChangePercent = item.RegularMarketChangePercent;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                acao.erro = ex;
+            }
+
+            return acao;
+        }
+
         // GET: Investimentos
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
+                 
+            foreach(Investimento item in applicationDbContext)
+            {
+                Task<Acao> acaoAsync = getStockData(item.Empresa.Ticker);
+
+                Acao acao = new Acao();
+
+                if (acaoAsync.Result.erro == null)
+                {
+                    acao = acaoAsync.Result;
+                    item.Acao = acao;
+                }
+                
+            }
+            
             return View(await applicationDbContext.OrderBy(i=>i.Empresa.Ticker).ToListAsync());
         }
 

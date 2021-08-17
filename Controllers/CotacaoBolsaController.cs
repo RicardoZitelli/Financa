@@ -15,38 +15,11 @@ namespace Financa.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            var awaiter = getStockData();
-
-
+           
             return View();
         }
 
-        public async Task<int> getStockData()
-        {
-            try
-            {
-                string symbol = Request.Query["symbol"];
-                string type = Request.Query["type"].ToString().ToUpper();
-                type = type == "FII" ? ".SA" : "";
-                string param = symbol + type;
-                var security = await Yahoo.Symbols(symbol+".SA").QueryAsync();
-                var securities = security.Values.ToList();
-                double preco;
-               
-                foreach(var item in securities)
-                {
-                    preco = item.Ask;
-                }
-                
-            }
-            catch (Exception ex)
-            {
-
-
-            }
-
-            return 1;
-        }
+        
 
         public ContentResult Acao(string symbol)
         {

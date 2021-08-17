@@ -1,74 +1,105 @@
-﻿@{
+﻿@model Financa.Models.Acao
+@{
 
 }
-<div id="corpo">
-
-</div>
-
-<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-<script>
-
-    var getUrlParameter = function getUrlParameter(sParam) {
-        var sPageURL = window.location.search.substring(1),
-            sURLVariables = sPageURL.split('&'),
-            sParameterName,
-            i;
-
-        for (i = 0; i < sURLVariables.length; i++) {
-            sParameterName = sURLVariables[i].split('=');
-
-            if (sParameterName[0] === sParam) {
-                return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-            }
-        }
-        return false;
-    };
-
-    var symbol = getUrlParameter('symbol');
-    //api hgbrasil
-    $.getJSON("/CotacaoBolsa/Acao", { symbol: symbol })
-        .done(function (data) {
-            const obj = JSON.parse(data);
-            const name = obj.results["" + symbol + ""].name;
-            const ticker = obj.results["" + symbol + ""].symbol;
-            const price = obj.results["" + symbol + ""].price;
-            const change_percent = obj.results["" + symbol + ""].change_percent;
-
-            var corpo = "<table class='table'><tr>";
-            corpo += "<th>Ação</th>";
-            corpo += "<th>Ticker</th>";
-            corpo += "<th>Preço</th>";
-            corpo += "<th>Mudança Percentual</th>";
-            corpo += "</tr>";
-            corpo += "<tr>";
-            corpo += "<td>";
-            corpo += name;
-            corpo += "</td>";
-            corpo += "<td>";
-            corpo += ticker;
-            corpo += "</td>";
-            corpo += "<td>";
-            corpo += "R$ " + price.toString().replace(".",",");
-            corpo += "</td>";
-
-            if (change_percent > 0)
+<h4>
+    <table class='table'>
+        <tr>
+            <th>Ação</th>
+            <th>Ticker</th>
+            <th>Preço</th>
+            <th>Mudança Percentual</th>
+        </tr>
+        <tr>
+            <td>
+                @Model.ShortName
+            </td>
+            <td>
+                @Model.Ticker
+            </td>
+            <td>
+                @Model.Bid.ToString("C")
+            </td>
+            @if (Model.RegularMarketChangePercent > 0)
             {
-                corpo += "<td style='color:#155724;'>";
-                corpo += change_percent.toString().replace(".", ",") + "%";
-                corpo += "</td>";
+                <td style='color:#155724;'>
+                    @Model.RegularMarketChangePercent.ToString("n2")%
+                </td>
             }
             else
             {
-                corpo += "<td style='color:#721c24'>";
-                corpo += change_percent.toString().replace(".", ",") + "%";
-                corpo += "</td>";
+                <td style='color: #721c24;'>
+                    @Model.RegularMarketChangePercent.ToString("n2")%
+                </td>
             }
+        </tr>
+    </table>
+</h4>
 
-            corpo += "</td></tr></table>";
-            
-            $("#corpo").html(corpo);
+@*<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>*@
+<script>
 
-        });
+    //var getUrlParameter = function getUrlParameter(sParam) {
+    //    var sPageURL = window.location.search.substring(1),
+    //        sURLVariables = sPageURL.split('&'),
+    //        sParameterName,
+    //        i;
+
+    //    for (i = 0; i < sURLVariables.length; i++) {
+    //        sParameterName = sURLVariables[i].split('=');
+
+    //        if (sParameterName[0] === sParam) {
+    //            return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+    //        }
+    //    }
+    //    return false;
+    //};
+
+    //var symbol = getUrlParameter('symbol');
+    //api hgbrasil
+    //$.getJSON("/CotacaoBolsa/Acao", { symbol: symbol })
+    //    .done(function (data) {
+    //        const obj = JSON.parse(data);
+    //        const name = obj.results["" + symbol + ""].name;
+    //        const ticker = obj.results["" + symbol + ""].symbol;
+    //        const price = obj.results["" + symbol + ""].price;
+    //        const change_percent = obj.results["" + symbol + ""].change_percent;
+
+    //        var corpo = "<table class='table'><tr>";
+    //        corpo += "<th>Ação</th>";
+    //        corpo += "<th>Ticker</th>";
+    //        corpo += "<th>Preço</th>";
+    //        corpo += "<th>Mudança Percentual</th>";
+    //        corpo += "</tr>";
+    //        corpo += "<tr>";
+    //        corpo += "<td>";
+    //        corpo += name;
+    //        corpo += "</td>";
+    //        corpo += "<td>";
+    //        corpo += ticker;
+    //        corpo += "</td>";
+    //        corpo += "<td>";
+    //        corpo += "R$ " + price.toString().replace(".",",");
+    //        corpo += "</td>";
+
+    //        if (change_percent > 0)
+    //        {
+    //            corpo += "<td style='color:#155724;'>";
+    //            corpo += change_percent.toString().replace(".", ",") + "%";
+    //            corpo += "</td>";
+    //        }
+    //        else
+    //        {
+    //            corpo += "<td style='color:#721c24'>";
+    //            corpo += change_percent.toString().replace(".", ",") + "%";
+    //            corpo += "</td>";
+    //        }
+
+    //        corpo += "</td></tr></table>";
+
+    //        $("#corpo").html(corpo);
+
+    //    });
 
 
 
