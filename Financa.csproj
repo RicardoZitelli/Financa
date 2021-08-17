@@ -10,6 +10,9 @@
     <Compile Remove="Data\Migrations\20210814183516_03.Designer.cs" />
     <Compile Remove="Data\Migrations\20210814204956_05.cs" />
     <Compile Remove="Data\Migrations\20210814204956_05.Designer.cs" />
+    <Compile Remove="Models\Market_Time.cs" />
+    <Compile Remove="Models\Mercado.cs" />
+    <Compile Remove="Models\PETR4.cs" />
     <Compile Remove="Models\sp_TotalInvestidoEmpresa.cs" />
   </ItemGroup>
 
@@ -28,6 +31,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="Moment.js" Version="2.29.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="YahooFinanceApi" Version="2.1.2" />
   </ItemGroup>
 
 </Project>

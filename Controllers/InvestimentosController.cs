@@ -27,7 +27,7 @@ namespace Financa.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await applicationDbContext.OrderBy(i=>i.Empresa.Ticker).ToListAsync());
         }
 
         // GET: Investimentos/Details/5
@@ -177,9 +177,7 @@ namespace Financa.Controllers
         {
             List<Investimento> investimentos = new List<Investimento>();
             if (file.Length > 0)
-            {
-                // For .net core, the next line requires the NuGet package, 
-                //System.Text.Encoding.CodePages;
+            {               
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
                 using (var stream = file.OpenReadStream())
@@ -188,7 +186,7 @@ namespace Financa.Controllers
                     {
                         bool cabecalho = true;
 
-                        while (reader.Read()) //Each row of the file
+                        while (reader.Read())
                         {
                             if (!cabecalho)
                             {
