@@ -11,7 +11,7 @@ namespace Financa.Models
         [Display(Name = "Valor Atual*")]
         public double Ask { get; set; }
         public double AverageVolume { get; set; }
-        [Display(Name = "Preço de Venda")]
+        [Display(Name = "Valor Total")]
         public double Bid { get; set; }
         public double LastTradePrice { get; set; }
         public string NameCompany { get; set; }

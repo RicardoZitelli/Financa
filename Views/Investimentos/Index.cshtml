@@ -51,6 +51,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Acao.Bid)
             </th>
+            <th>
+                Valor Total (Atual)
+            </th>
 
             <th></th>
         </tr>
@@ -85,6 +88,13 @@
                     @{ parameterValue = @Html.FormatValue(item.Acao.Bid, "{0:C}");
                         parameterValue += " (" + item.Acao.RegularMarketChangePercent.ToString("n2") + "%)";}
                     @Html.DisplayFor(modelItem => parameterValue);
+                </td>
+                <td>
+                    @{
+                        parameterValue = (item.Acao.Bid * item.Quantidade).ToString("C");
+                    }
+                    @Html.DisplayFor(modelItem => parameterValue)
+
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
