@@ -8,10 +8,10 @@ namespace Financa.Models
 {
     public class Acao
     {
-        [Display(Name = "Valor Atual*")]
+        [Display(Name = "Valor de Compra*")]
         public double Ask { get; set; }
         public double AverageVolume { get; set; }
-        [Display(Name = "Valor Total")]
+        [Display(Name = "Valor Atual*")]
         public double Bid { get; set; }
         public double LastTradePrice { get; set; }
         public string NameCompany { get; set; }

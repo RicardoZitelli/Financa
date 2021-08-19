@@ -39,7 +39,10 @@ namespace Financa.Models
         public int Quantidade { get; set; }
         [Display(Name = "Preço de Compra")]
         [Required]
-        public decimal PrecoCompra { get; set; }        
+        public decimal PrecoCompra { get; set; }
+        [NotMapped]
+        [Display(Name ="Valor Total")]
+        public decimal Valor_Total { get; set; }
         [Display(Name ="Preço da Venda")]
         public decimal? PrecoVenda { get; set; }        
         public decimal? Corretagem { get; set; }
@@ -58,7 +61,26 @@ namespace Financa.Models
         public IFormFile FileUpload { get; set; }
         [NotMapped]
         public Acao Acao { get; set; }
-
+        [NotMapped]
+        public double Porcentagem {get; set; }
+        [NotMapped]
+        [Display(Name ="Valor da Carteira")]
+        public double ValorCarteira { get; set; }
+        [NotMapped]
+        [Display(Name ="Valorização")]
+        public double Valorizacao { get; set; }
+        [NotMapped]
+        [Display(Name = "Valorização(%)")]
+        public double ValorizacaoPercentual { get; set; }
+        [NotMapped]
+        [Display(Name = "Preço de Compra Médio")]
+        public double PrecoCompraMedio { get; set; }
+        [NotMapped]
+        [Display(Name = "Lucro/Prejuízo Referente ao Preço Médio")]
+        public double LucroPrejuizoReferentePrecoMedio { get; set; }
+        [NotMapped]
+        [Display(Name = "Valor Total Investido")]
+        public decimal Valor_Total_Investimento { get; set; }
 
     }
 }

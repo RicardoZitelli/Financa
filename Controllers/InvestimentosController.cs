@@ -12,16 +12,20 @@ using System.IO;
 
 using ExcelDataReader;
 using YahooFinanceApi;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace Financa.Controllers
 {
     public class InvestimentosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly string stringConnection;
 
         public InvestimentosController(ApplicationDbContext context)
         {
             _context = context;
+            stringConnection = "Server=DESKTOP-UT5R5SE;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
         }
 
         public async Task<Acao> getStockData(string symbol)
@@ -63,9 +67,11 @@ namespace Financa.Controllers
         // GET: Investimentos
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
-                 
-            foreach(Investimento item in applicationDbContext)
+            var investimentos = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
+
+            var vw_investimento = vw_Investimentos();
+
+            foreach (Investimento item in investimentos)
             {
                 Task<Acao> acaoAsync = getStockData(item.Empresa.Ticker);
 
@@ -74,12 +80,61 @@ namespace Financa.Controllers
                 if (acaoAsync.Result.erro == null)
                 {
                     acao = acaoAsync.Result;
+
                     item.Acao = acao;
+
+                    item.Valor_Total = vw_investimento.Where(i => i.Id == item.Id).Select(i => i.Valor_Total).FirstOrDefault();
+
+                    item.Porcentagem = vw_investimento.Where(i => i.Id == item.Id).Select(i => i.Porcentagem).FirstOrDefault();
+
+                    item.Valor_Total_Investimento = vw_investimento.Where(i => i.Id == item.Id).Select(i => i.Valor_Total_Investimento).FirstOrDefault();
+
+                    item.ValorCarteira = acao.Bid * item.Quantidade;
+
+                    item.Valorizacao = item.ValorCarteira - double.Parse(item.Valor_Total.ToString()) - double.Parse(item.Corretagem.ToString());
+                    
+                    item.ValorizacaoPercentual = ((((item.ValorCarteira-double.Parse(item.Corretagem.ToString()))) / double.Parse(item.Valor_Total.ToString()))-1)*100;
+
                 }
-                
+
             }
-            
-            return View(await applicationDbContext.OrderBy(i=>i.Empresa.Ticker).ToListAsync());
+
+            return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ToListAsync());
+        }
+
+        public List<vw_Investimentos> vw_Investimentos()
+        {
+            List<vw_Investimentos> listaInvestimentos = new List<vw_Investimentos>();
+
+            using (SqlConnection sql = new SqlConnection(stringConnection))
+            {
+                using (SqlCommand cmd = new SqlCommand("SELECT * FROM vw_Investimentos ORDER BY Ticker", sql))
+                {
+                    cmd.CommandType = CommandType.Text;
+
+                    sql.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var investimento = new vw_Investimentos((int)reader[0]
+                            , DateTime.Parse(reader[1].ToString())
+                            , reader[2].ToString()
+                            , reader[3].ToString()
+                            , int.Parse(reader[4].ToString())
+                            , decimal.Parse(reader[5].ToString())
+                            , decimal.Parse(reader[6].ToString())
+                            , double.Parse(reader[7].ToString())
+                            , decimal.Parse(reader[8].ToString())
+                            , decimal.Parse(reader[9].ToString()));
+
+                            listaInvestimentos.Add(investimento);
+                        }
+                    }
+                }
+            }
+            return listaInvestimentos;
         }
 
         // GET: Investimentos/Details/5
@@ -219,7 +274,7 @@ namespace Financa.Controllers
             return _context.Investimentos.Any(e => e.Id == id);
         }
 
-        private bool InvestimentoExists(DateTime data, decimal precoCompra,Empresa empresa, Corretora corretora)
+        private bool InvestimentoExists(DateTime data, decimal precoCompra, Empresa empresa, Corretora corretora)
         {
             return _context.Investimentos.Any(e => e.Data == data && e.PrecoCompra == precoCompra && e.CorretoraId == corretora.Id && e.EmpresaId == empresa.Id);
         }
@@ -229,7 +284,7 @@ namespace Financa.Controllers
         {
             List<Investimento> investimentos = new List<Investimento>();
             if (file.Length > 0)
-            {               
+            {
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
                 using (var stream = file.OpenReadStream())
@@ -279,9 +334,9 @@ namespace Financa.Controllers
 
                 _context.SaveChanges();
             }
-                        
+
             var applicationDbContext = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
-            return View(nameof(Index),applicationDbContext.ToList());
+            return View(nameof(Index), applicationDbContext.ToList());
         }
 
         private Empresa GravaEmpresa(IExcelDataReader reader, Empresa empresa)

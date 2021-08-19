@@ -34,10 +34,10 @@
                 @Html.DisplayNameFor(model => model.Corretora)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Empresa)
+                @Html.DisplayNameFor(model => model.Data)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Data)
+                @Html.DisplayNameFor(model => model.Empresa)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Tipo)
@@ -49,58 +49,99 @@
                 @Html.DisplayNameFor(model => model.PrecoCompra)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Valor_Total)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Porcentagem)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Acao.Bid)
             </th>
             <th>
-                Valor Total (Atual)
+                @Html.DisplayNameFor(model => model.ValorCarteira)
             </th>
-
+            <th>
+                @Html.DisplayNameFor(model => model.Valorizacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorizacaoPercentual)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Corretora.Descricao)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Empresa.Ticker)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Data)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Tipo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Quantidade)
-                </td>
-                <td>
-                    @{string parameterValue = @Html.FormatValue(item.PrecoCompra, "{0:C}");}
-                    @Html.DisplayFor(modelItem => parameterValue)
-                </td>
-                <td class="@(item.Acao.RegularMarketChangePercent > 0 ? "success" : "danger")">
-                    @{ parameterValue = @Html.FormatValue(item.Acao.Bid, "{0:C}");
-                        parameterValue += " (" + item.Acao.RegularMarketChangePercent.ToString("n2") + "%)";}
-                    @Html.DisplayFor(modelItem => parameterValue);
-                </td>
-                <td>
-                    @{
-                        parameterValue = (item.Acao.Bid * item.Quantidade).ToString("C");
-                    }
-                    @Html.DisplayFor(modelItem => parameterValue)
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Corretora.Descricao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Data)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Empresa.Ticker)
+            </td>
 
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantidade)
+            </td>
+            <td>
+                @{string parameterValue = @Html.FormatValue(item.PrecoCompra, "{0:C}");}
+                @Html.DisplayFor(modelItem => parameterValue)
+            </td>
+            <td>
+                @{
+                    parameterValue = item.Valor_Total.ToString("C");
+                }
+                @Html.DisplayFor(modelItem => parameterValue)
+
+            </td>
+            <td>
+                @{
+                    parameterValue = item.Porcentagem.ToString("n2");
+                }
+                @Html.DisplayFor(modelItem => parameterValue)%
+            </td>
+            <td class="@(item.Acao.RegularMarketChangePercent > 0 ? "success" : "danger")">
+                @{
+                    parameterValue = @Html.FormatValue(item.Acao.Bid, "{0:C}");
+                    parameterValue += " (" + item.Acao.RegularMarketChangePercent.ToString("n2") + "%)";
+                }
+                @Html.DisplayFor(modelItem => parameterValue);
+            </td>
+            <td class="@(item.ValorCarteira > double.Parse(item.Valor_Total.ToString()) ? "success" : "danger")">
+                @{
+                    parameterValue = (item.ValorCarteira).ToString("C");
+                }
+                @Html.DisplayFor(modelItem => parameterValue)
+
+            </td>
+            <td class="@(item.Valorizacao > 0 ? "success" : "danger")">
+                @{
+                    parameterValue = (item.Valorizacao).ToString("C");
+                }
+                @Html.DisplayFor(modelItem => parameterValue)
+
+            </td>
+            <td class="@(item.ValorizacaoPercentual > 0 ? "success" : "danger")">
+                @{
+                    parameterValue = (item.ValorizacaoPercentual).ToString("n2");
+                }
+                @Html.DisplayFor(modelItem => parameterValue)%
+
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
