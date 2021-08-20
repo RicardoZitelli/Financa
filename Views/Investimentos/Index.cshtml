@@ -24,12 +24,9 @@
     <a asp-action="Create">Create New</a>
 
 </p>
-<table class="table">
+<table class="table table-striped table-hover table-responsive">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Corretora)
             </th>
@@ -66,82 +63,102 @@
             <th>
                 @Html.DisplayNameFor(model => model.ValorizacaoPercentual)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrecoCompraMedio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LucroPrejuizoReferentePrecoMedio)
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Corretora.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Empresa.Ticker)
-            </td>
+            <tr>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Corretora.Descricao)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Data)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Empresa.Ticker)
+                </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantidade)
-            </td>
-            <td>
-                @{string parameterValue = @Html.FormatValue(item.PrecoCompra, "{0:C}");}
-                @Html.DisplayFor(modelItem => parameterValue)
-            </td>
-            <td>
-                @{
-                    parameterValue = item.Valor_Total.ToString("C");
-                }
-                @Html.DisplayFor(modelItem => parameterValue)
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Tipo)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Quantidade)
+                </td>
+                <td class="text-center">
+                    @{string parameterValue = @Html.FormatValue(item.PrecoCompra, "{0:C}");}
+                    @Html.DisplayFor(modelItem => parameterValue)
+                </td>
+                <td class="text-center">
+                    @{
+                        parameterValue = item.Valor_Total.ToString("C");
+                    }
+                    @Html.DisplayFor(modelItem => parameterValue)
 
-            </td>
-            <td>
-                @{
-                    parameterValue = item.Porcentagem.ToString("n2");
-                }
-                @Html.DisplayFor(modelItem => parameterValue)%
-            </td>
-            <td class="@(item.Acao.RegularMarketChangePercent > 0 ? "success" : "danger")">
-                @{
-                    parameterValue = @Html.FormatValue(item.Acao.Bid, "{0:C}");
-                    parameterValue += " (" + item.Acao.RegularMarketChangePercent.ToString("n2") + "%)";
-                }
-                @Html.DisplayFor(modelItem => parameterValue);
-            </td>
-            <td class="@(item.ValorCarteira > double.Parse(item.Valor_Total.ToString()) ? "success" : "danger")">
-                @{
-                    parameterValue = (item.ValorCarteira).ToString("C");
-                }
-                @Html.DisplayFor(modelItem => parameterValue)
+                </td>
+                <td class="text-center">
+                    @{
+                        parameterValue = item.Porcentagem.ToString("n2");
+                    }
+                    @Html.DisplayFor(modelItem => parameterValue)%
+                </td>
+                <td class="@("text-center alert-primary " + (item.Acao.RegularMarketChangePercent > 0 ? "success" : "danger"))" style="font-weight:bold">
+                    @{
+                        var valorAtual = (item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask);
+                        parameterValue = @Html.FormatValue(valorAtual, "{0:C}");
+                        parameterValue += " (" + item.Acao.RegularMarketChangePercent.ToString("n2") + "%)";
+                    }
+                    @Html.DisplayFor(modelItem => parameterValue);
+                </td>
+                <td class="@("text-center "+(item.ValorCarteira > double.Parse(item.Valor_Total.ToString()) ? "success" : "danger"))">
+                    @{
+                        parameterValue = (item.ValorCarteira).ToString("C");
+                    }
+                    @Html.DisplayFor(modelItem => parameterValue)
 
-            </td>
-            <td class="@(item.Valorizacao > 0 ? "success" : "danger")">
-                @{
-                    parameterValue = (item.Valorizacao).ToString("C");
-                }
-                @Html.DisplayFor(modelItem => parameterValue)
+                </td>
+                <td class="@("text-center "+(item.Valorizacao > 0 ? "success" : "danger"))">
+                    @{
+                        parameterValue = (item.Valorizacao).ToString("C");
+                    }
+                    @Html.DisplayFor(modelItem => parameterValue)
 
-            </td>
-            <td class="@(item.ValorizacaoPercentual > 0 ? "success" : "danger")">
-                @{
-                    parameterValue = (item.ValorizacaoPercentual).ToString("n2");
-                }
-                @Html.DisplayFor(modelItem => parameterValue)%
+                </td>
+                <td class="@("text-center "+(item.ValorizacaoPercentual > 0 ? "success" : "danger"))">
+                    @{
+                        parameterValue = (item.ValorizacaoPercentual).ToString("n2");
+                    }
+                    @Html.DisplayFor(modelItem => parameterValue)%
 
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+                </td>
+                @if (item.Quantidade_Registro_Por_Acao > 0)
+                {
+                    <td rowspan="@item.Quantidade_Registro_Por_Acao" class="@("text-center "+((item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask) > double.Parse(item.PrecoCompraMedio.ToString())  ? "success" : "danger"))" style="vertical-align: middle;background-color: #E0E0E0;border: 1px solid #C0C0C0;">
+                        @{
+                            parameterValue = (item.PrecoCompraMedio).ToString("C");
+                        }
+                        @Html.DisplayFor(modelItem => parameterValue)
+
+                    </td>
+                    <td rowspan="@item.Quantidade_Registro_Por_Acao" class="@("text-center "+(item.LucroPrejuizoReferentePrecoMedio > 0 ? "success" : "danger"))" style="vertical-align: middle;background-color: #E0E0E0;border: 1px solid #C0C0C0;">
+                        @{
+                            parameterValue = (item.LucroPrejuizoReferentePrecoMedio).ToString("C");
+                        }
+                        @Html.DisplayFor(modelItem => parameterValue)
+
+                    </td>
+                }
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

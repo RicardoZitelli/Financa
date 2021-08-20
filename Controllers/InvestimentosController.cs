@@ -33,8 +33,7 @@ namespace Financa.Controllers
             Acao acao = new Acao();
 
             try
-            {
-                //string ticker = Request.Query["symbol"];
+            {                
                 string ticker = symbol;
 
                 string param = ticker + ".SA";
@@ -67,9 +66,13 @@ namespace Financa.Controllers
         // GET: Investimentos
         public async Task<IActionResult> Index()
         {
-            var investimentos = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
+            var investimentos = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa).OrderBy(i => i.Empresa.Ticker);
 
             var vw_investimento = vw_Investimentos();
+
+            string ticker = "";
+            
+            
 
             foreach (Investimento item in investimentos)
             {
@@ -92,15 +95,45 @@ namespace Financa.Controllers
                     item.ValorCarteira = acao.Bid * item.Quantidade;
 
                     item.Valorizacao = item.ValorCarteira - double.Parse(item.Valor_Total.ToString()) - double.Parse(item.Corretagem.ToString());
-                    
-                    item.ValorizacaoPercentual = ((((item.ValorCarteira-double.Parse(item.Corretagem.ToString()))) / double.Parse(item.Valor_Total.ToString()))-1)*100;
+
+                    item.ValorizacaoPercentual = ((((item.ValorCarteira - double.Parse(item.Corretagem.ToString()))) / double.Parse(item.Valor_Total.ToString())) - 1) * 100;
 
                 }
 
             }
 
+            foreach (Investimento item in investimentos)
+            {
+                InsereValoresUnicoInvestimento(investimentos
+                    , ref ticker                                   
+                    , item);
+            }
+
             return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ToListAsync());
         }
+
+        private static void InsereValoresUnicoInvestimento(IOrderedQueryable<Investimento> investimentos, ref string ticker, Investimento item)
+        {
+            decimal valorTotalAcao = 0;
+            int quantidade = 0;
+
+            if (ticker != item.Empresa.Ticker)
+            {
+                ticker = item.Empresa.Ticker;
+
+                valorTotalAcao = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).ToList().Sum(i=> i.Valor_Total);
+                
+                quantidade = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).ToList().Sum(i => i.Quantidade);
+
+                item.PrecoCompraMedio = valorTotalAcao / quantidade;
+
+                item.LucroPrejuizoReferentePrecoMedio = quantidade * ((item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask) - double.Parse(item.PrecoCompraMedio.ToString()));
+
+                item.Quantidade_Registro_Por_Acao = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).ToList().Count();                              
+                
+            }
+        }
+
 
         public List<vw_Investimentos> vw_Investimentos()
         {

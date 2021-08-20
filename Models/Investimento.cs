@@ -74,13 +74,15 @@ namespace Financa.Models
         public double ValorizacaoPercentual { get; set; }
         [NotMapped]
         [Display(Name = "Preço de Compra Médio")]
-        public double PrecoCompraMedio { get; set; }
+        public decimal PrecoCompraMedio { get; set; }
         [NotMapped]
         [Display(Name = "Lucro/Prejuízo Referente ao Preço Médio")]
         public double LucroPrejuizoReferentePrecoMedio { get; set; }
         [NotMapped]
         [Display(Name = "Valor Total Investido")]
         public decimal Valor_Total_Investimento { get; set; }
+        [NotMapped]        
+        public int Quantidade_Registro_Por_Acao { get; set; }
 
     }
 }

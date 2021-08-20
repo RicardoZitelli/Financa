@@ -20,12 +20,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="ValorCarteira" class="control-label"></label>
-                <input asp-for="ValorCarteira" class="form-control" />
+                <input asp-for="ValorCarteira" class="form-control" onblur="porcentagem();"/>
                 <span asp-validation-for="ValorCarteira" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TotalRecebido" class="control-label"></label>
-                <input asp-for="TotalRecebido" class="form-control" />
+                <input asp-for="TotalRecebido" class="form-control" onblur="porcentagem();"/>
                 <span asp-validation-for="TotalRecebido" class="text-danger"></span>
             </div>
             <div class="form-group">
