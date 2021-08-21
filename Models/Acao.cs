@@ -10,10 +10,10 @@ namespace Financa.Models
     {
         [Display(Name = "Valor de Compra*")]
         public double Ask { get; set; }
-        public double AverageVolume { get; set; }
+        public decimal AverageVolume { get; set; }
         [Display(Name = "Valor Atual*")]
         public double Bid { get; set; }
-        public double LastTradePrice { get; set; }
+        public decimal LastTradePrice { get; set; }
         public string NameCompany { get; set; }
         [Display(Name = "Mudança Percentual")]
         public double RegularMarketChangePercent { get; set; }

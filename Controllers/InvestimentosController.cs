@@ -66,17 +66,23 @@ namespace Financa.Controllers
         // GET: Investimentos
         public async Task<IActionResult> Index()
         {
-            var investimentos = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa).OrderBy(i => i.Empresa.Ticker);
+            var investimentos = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa).Where(i => i.Tipo.ToUpper() != "FUNDO DE INVESTIMENTO").OrderBy(i => i.Empresa.Ticker);
 
             var vw_investimento = vw_Investimentos();
 
             string ticker = "";
-            
-            
+
+            Task<Acao> acaoAsync = getStockData("");
 
             foreach (Investimento item in investimentos)
             {
-                Task<Acao> acaoAsync = getStockData(item.Empresa.Ticker);
+
+                if (ticker != item.Empresa.Ticker)
+                {
+                    ticker = item.Empresa.Ticker;
+
+                    acaoAsync = getStockData(item.Empresa.Ticker);
+                }
 
                 Acao acao = new Acao();
 
@@ -90,50 +96,84 @@ namespace Financa.Controllers
 
                     item.Porcentagem = vw_investimento.Where(i => i.Id == item.Id).Select(i => i.Porcentagem).FirstOrDefault();
 
-                    item.Valor_Total_Investimento = vw_investimento.Where(i => i.Id == item.Id).Select(i => i.Valor_Total_Investimento).FirstOrDefault();
+                    item.Valor_Total_Investido = vw_investimento.Where(i => i.Id == item.Id).Select(i => i.Valor_Total_Investimento).FirstOrDefault();
 
-                    item.ValorCarteira = acao.Bid * item.Quantidade;
+                    item.ValorCarteira = item.Quantidade * (item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask);
+                                        
+                    double corretagem = double.Parse(item.Corretagem.ToString());
+                    double valorTotal = double.Parse(item.Valor_Total.ToString());
 
-                    item.Valorizacao = item.ValorCarteira - double.Parse(item.Valor_Total.ToString()) - double.Parse(item.Corretagem.ToString());
+                    item.Valorizacao = item.ValorCarteira - valorTotal - corretagem;                    
 
-                    item.ValorizacaoPercentual = ((((item.ValorCarteira - double.Parse(item.Corretagem.ToString()))) / double.Parse(item.Valor_Total.ToString())) - 1) * 100;
+                    item.ValorizacaoPercentual = (((item.ValorCarteira - corretagem) / valorTotal) - 1) * 100;
 
                 }
-
             }
 
-            foreach (Investimento item in investimentos)
-            {
-                InsereValoresUnicoInvestimento(investimentos
-                    , ref ticker                                   
-                    , item);
-            }
+            InsereValoresNoUltimoRegistroDeCadaEmpresa(investimentos.ToList());
+
+            InsereValorNoUltimoRegistro(investimentos.ToList(), investimentos.ToList().ElementAt(investimentos.Count() - 1));
 
             return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ToListAsync());
         }
 
-        private static void InsereValoresUnicoInvestimento(IOrderedQueryable<Investimento> investimentos, ref string ticker, Investimento item)
-        {
-            decimal valorTotalAcao = 0;
-            int quantidade = 0;
-
-            if (ticker != item.Empresa.Ticker)
+        private static void InsereValoresNoUltimoRegistroDeCadaEmpresa(List<Investimento> investimentos)
+        {           
+            string ticker = "";
+            
+            foreach (Investimento item in investimentos)
             {
-                ticker = item.Empresa.Ticker;
+                if (ticker != item.Empresa.Ticker)
+                {
+                    decimal valorTotalAcao = 0;
+                    int sumAcoesPorEmpresa = 0;
+                    int countAcoesPorEmpresa = 0;
+                    int quantidadeAcoesTotal = 0;
 
-                valorTotalAcao = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).ToList().Sum(i=> i.Valor_Total);
-                
-                quantidade = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).ToList().Sum(i => i.Quantidade);
+                    ticker = item.Empresa.Ticker;
 
-                item.PrecoCompraMedio = valorTotalAcao / quantidade;
+                    valorTotalAcao = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).Sum(i => i.Valor_Total);
 
-                item.LucroPrejuizoReferentePrecoMedio = quantidade * ((item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask) - double.Parse(item.PrecoCompraMedio.ToString()));
+                    countAcoesPorEmpresa = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).Count();
+                    
+                    sumAcoesPorEmpresa = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).Sum(i=>i.Quantidade);
 
-                item.Quantidade_Registro_Por_Acao = investimentos.Where(i => i.Empresa.Ticker == item.Empresa.Ticker).ToList().Count();                              
-                
+                    quantidadeAcoesTotal = investimentos.ToList().Sum(i => i.Quantidade);
+
+                    item.Quantidade_Registro_Por_Acao = countAcoesPorEmpresa;
+
+                    item.PrecoCompraMedio = valorTotalAcao / sumAcoesPorEmpresa;
+
+                    item.PerformanceFrenteAoPrecoMedio = sumAcoesPorEmpresa * ((item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask) - double.Parse(item.PrecoCompraMedio.ToString()));
+
+                }
             }
         }
+            
+        private static void InsereValorNoUltimoRegistro(List<Investimento> investimentos, Investimento item)
+        {
+            item.Valor_Total_Porcentagem = investimentos.ToList().Sum(i => i.Porcentagem);
 
+            item.Valor_Total_Investido = decimal.Parse(investimentos.ToList().Sum(i => i.Valor_Total).ToString());
+
+            item.Valor_Total_Corretagem = decimal.Parse(investimentos.ToList().Sum(i => i.Corretagem).ToString());
+
+            item.Quantidade_Registro_Total = investimentos.Count();
+
+            item.Quantidade_Acao_Total = investimentos.ToList().Sum(i => i.Quantidade);
+
+            item.Valor_Total_Investido_Atual = decimal.Parse(investimentos.ToList().Sum(i => i.ValorCarteira).ToString());
+
+            decimal valor_Total_Investido = investimentos.Sum(i=>i.Valor_Total);
+            decimal valor_Total_Investido_Atual = decimal.Parse(investimentos.Sum(i=>i.ValorCarteira).ToString());
+            decimal corretagem = decimal.Parse(investimentos.Sum(i => i.Corretagem).ToString());
+
+            item.Valor_Total_Valorizacao = valor_Total_Investido_Atual- valor_Total_Investido;
+
+            item.Valor_Total_ValorizacaoPorcentual = double.Parse(((((valor_Total_Investido_Atual - corretagem) / valor_Total_Investido) - 1) * 100).ToString());
+            
+            item.Valor_Total_LucroPrejuizoReferentePrecoMedio = investimentos.ToList().Sum(i => i.PerformanceFrenteAoPrecoMedio);
+        }
 
         public List<vw_Investimentos> vw_Investimentos()
         {
@@ -141,7 +181,7 @@ namespace Financa.Controllers
 
             using (SqlConnection sql = new SqlConnection(stringConnection))
             {
-                using (SqlCommand cmd = new SqlCommand("SELECT * FROM vw_Investimentos ORDER BY Ticker", sql))
+                using (SqlCommand cmd = new SqlCommand("SELECT * FROM vw_Investimentos WHERE Tipo <> 'FUNDO DE INVESTIMENTO' ORDER BY Ticker", sql))
                 {
                     cmd.CommandType = CommandType.Text;
 
@@ -331,7 +371,7 @@ namespace Financa.Controllers
                             if (!cabecalho)
                             {
                                 var corretora = _context.Corretoras.Where(c => c.Descricao == reader.GetValue(0).ToString()).FirstOrDefault();
-                                var empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue(1).ToString()).FirstOrDefault();
+                                var empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue(3).ToString()).FirstOrDefault();
 
                                 empresa = GravaEmpresa(reader, empresa);
                                 corretora = GravaCorretora(reader, corretora);
@@ -339,10 +379,10 @@ namespace Financa.Controllers
                                 Investimento investimento = new Investimento()
                                 {
                                     Id = 0,
-                                    Data = (DateTime)reader.GetValue(2),
-                                    Tipo = reader.GetValue(3).ToString(),
-                                    Quantidade = int.Parse(reader.GetValue(4).ToString()),
-                                    PrecoCompra = decimal.Parse(reader.GetValue(5).ToString()),
+                                    Data = (DateTime)reader.GetValue(1),
+                                    Tipo = reader.GetValue(4).ToString(),
+                                    Quantidade = int.Parse(reader.GetValue(5).ToString()),
+                                    PrecoCompra = decimal.Parse(reader.GetValue(6).ToString()),
                                     PrecoVenda = 0,
                                     Corretagem = 0,
                                     DataVenda = null,
