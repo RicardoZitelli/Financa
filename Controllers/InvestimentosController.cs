@@ -68,6 +68,17 @@ namespace Financa.Controllers
         {
             var investimentos = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa).Where(i => i.Tipo.ToUpper() != "FUNDO DE INVESTIMENTO").OrderBy(i => i.Empresa.Ticker);
 
+            PreenchePropriedades(investimentos);
+
+            InsereValoresNoUltimoRegistroDeCadaEmpresa(investimentos.ToList());
+
+            InsereValoresNoUltimoRegistro(investimentos.ToList(), investimentos.ToList().ElementAt(investimentos.Count() - 1));
+
+            return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ToListAsync());
+        }
+
+        private void PreenchePropriedades(IOrderedQueryable<Investimento> investimentos)
+        {
             var vw_investimento = vw_Investimentos();
 
             string ticker = "";
@@ -99,22 +110,16 @@ namespace Financa.Controllers
                     item.Valor_Total_Investido = vw_investimento.Where(i => i.Id == item.Id).Select(i => i.Valor_Total_Investimento).FirstOrDefault();
 
                     item.ValorCarteira = item.Quantidade * (item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask);
-                                        
+
                     double corretagem = double.Parse(item.Corretagem.ToString());
                     double valorTotal = double.Parse(item.Valor_Total.ToString());
 
-                    item.Valorizacao = item.ValorCarteira - valorTotal - corretagem;                    
+                    item.Valorizacao = item.ValorCarteira - valorTotal - corretagem;
 
                     item.ValorizacaoPercentual = (((item.ValorCarteira - corretagem) / valorTotal) - 1) * 100;
 
                 }
             }
-
-            InsereValoresNoUltimoRegistroDeCadaEmpresa(investimentos.ToList());
-
-            InsereValorNoUltimoRegistro(investimentos.ToList(), investimentos.ToList().ElementAt(investimentos.Count() - 1));
-
-            return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ToListAsync());
         }
 
         private static void InsereValoresNoUltimoRegistroDeCadaEmpresa(List<Investimento> investimentos)
@@ -150,7 +155,7 @@ namespace Financa.Controllers
             }
         }
             
-        private static void InsereValorNoUltimoRegistro(List<Investimento> investimentos, Investimento item)
+        private static void InsereValoresNoUltimoRegistro(List<Investimento> investimentos, Investimento item)
         {
             item.Valor_Total_Porcentagem = investimentos.ToList().Sum(i => i.Porcentagem);
 

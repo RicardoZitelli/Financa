@@ -46,7 +46,9 @@ namespace Financa.Controllers
 
         public IActionResult Index()
         {
-            sp_TotalInvestidoEmpresa();
+            TotalInvestidoPorEmpresa();
+
+            QuantidadeAcoesInvestidoPorEmpresa();
 
             return View();
         }
@@ -62,7 +64,7 @@ namespace Financa.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public void sp_TotalInvestidoEmpresa()
+        public void TotalInvestidoPorEmpresa()
         {
             using (SqlConnection sql = new SqlConnection(stringConnection))
             {
@@ -81,10 +83,35 @@ namespace Financa.Controllers
                             dataPoint.Add(new Struct_sp_TotalInvestidoEmpresa(reader[0].ToString(), double.Parse(reader[1].ToString())));
                         }
                         
-                        ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoint);                        
+                        ViewBag.TotalPorEmpresa = JsonConvert.SerializeObject(dataPoint);                        
                     }
                 }
             }
-        }              
+        }
+
+        public void QuantidadeAcoesInvestidoPorEmpresa()
+        {
+            using (SqlConnection sql = new SqlConnection(stringConnection))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_TotalInvestidoEmpresa", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    sql.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<Struct_sp_TotalInvestidoEmpresa> dataPoint = new List<Struct_sp_TotalInvestidoEmpresa>();
+
+                        while (reader.Read())
+                        {
+                            dataPoint.Add(new Struct_sp_TotalInvestidoEmpresa(reader[0].ToString(), double.Parse(reader[2].ToString())));
+                        }
+
+                        ViewBag.QuantidadeAcoes = JsonConvert.SerializeObject(dataPoint);
+                    }
+                }
+            }
+        }
     }
 }

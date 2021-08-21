@@ -10,9 +10,9 @@
 
 
 <div style="position:relative">
-    <div id="chartValorInvestido" style="height: 370px; width: 50%; position:absolute;left:0"></div>
+    <div id="chartValorInvestido" style="height: 370px; width:49%; position:absolute;left:0;border: 1px solid #000"></div>
 
-    <div id="chartContainer2" style="height: 370px; width: 50%;position:absolute; right:0"></div>
+    <div id="chartQuantidadeAcoesEmpresa" style="height: 370px; width:49%;position:absolute; right:0;border: 1px solid #000;margin-left:10px;"></div>
 </div>
 
 
@@ -35,17 +35,18 @@ window.onload = function () {
 	},
 	data: [{
 		type: "column",
-		dataPoints: @Html.Raw(ViewBag.DataPoints)
+        indexLabel: "{y}",
+		dataPoints: @Html.Raw(ViewBag.TotalPorEmpresa)
 	}]
 });
 
 	chart.render();
 
-	 chart = new CanvasJS.Chart("chartContainer2", {
+    chart = new CanvasJS.Chart("chartQuantidadeAcoesEmpresa", {
 	animationEnabled: true,
 	theme: "light2", // "light1", "light2", "dark1", "dark2"
 	title: {
-        text: "Total Investido por Empresa"
+        text: "Quantidade de Ações por Empresa"
 	},
     axisX: {
         title: "Empresas"
@@ -55,7 +56,8 @@ window.onload = function () {
 	},
 	data: [{
 		type: "column",
-		dataPoints: @Html.Raw(ViewBag.DataPoints)
+        indexLabel: "{y}",
+		dataPoints: @Html.Raw(ViewBag.QuantidadeAcoes)
 	}]
 });
 

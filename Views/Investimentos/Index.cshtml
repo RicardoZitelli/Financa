@@ -24,7 +24,7 @@
     <a asp-action="Create">Create New</a>
 
 </p>
-<table class="table table-striped table-hover table-responsive">
+<table class="table table-bordered table-striped table-hover table-responsive">
     <thead>
         <tr>
             <th class="text-center">
@@ -117,7 +117,7 @@
                         parameterValue = @Html.FormatValue(valorAtual, "{0:C}");
                         parameterValue += " (" + item.Acao.RegularMarketChangePercent.ToString("n2") + "%)";
                     }
-                    @Html.DisplayFor(modelItem => parameterValue);
+                    @Html.DisplayFor(modelItem => parameterValue)
                 </td>
                 <td class="@("text-center " + (item.ValorCarteira > double.Parse(item.Valor_Total.ToString()) ? "success" : "danger"))">
                     @{
