@@ -14,9 +14,11 @@ using ExcelDataReader;
 using YahooFinanceApi;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Financa.Controllers
 {
+    [Authorize]
     public class InvestimentosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -66,15 +68,25 @@ namespace Financa.Controllers
         // GET: Investimentos
         public async Task<IActionResult> Index()
         {
-            var investimentos = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa).Where(i => i.Tipo.ToUpper() != "FUNDO DE INVESTIMENTO").OrderBy(i => i.Empresa.Ticker);
+            var investimentos = _context.Investimentos
+                .Include(i => i.Corretora)
+                .Include(i => i.Empresa)
+                .Where(i => i.Tipo.ToUpper() != "FUNDO DE INVESTIMENTO")
+                .OrderBy(i => i.Empresa.Ticker)
+                .ThenBy(i => i.Data);
+            
+            ConfigurarObjeto(investimentos);
 
+            return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ThenBy(i => i.Data).ToListAsync());
+        }
+
+        private void ConfigurarObjeto(IOrderedQueryable<Investimento> investimentos)
+        {
             PreenchePropriedades(investimentos);
 
             InsereValoresNoUltimoRegistroDeCadaEmpresa(investimentos.ToList());
 
             InsereValoresNoUltimoRegistro(investimentos.ToList(), investimentos.ToList().ElementAt(investimentos.Count() - 1));
-
-            return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ToListAsync());
         }
 
         private void PreenchePropriedades(IOrderedQueryable<Investimento> investimentos)
@@ -358,9 +370,9 @@ namespace Financa.Controllers
         }
 
         [HttpPost]
-        public IActionResult InsereViaExcel(IFormFile file)
+        public ActionResult InsereViaExcel(IFormFile file)
         {
-            List<Investimento> investimentos = new List<Investimento>();
+            List<Investimento> listaInvestimentos = new List<Investimento>();
             if (file.Length > 0)
             {
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -384,7 +396,7 @@ namespace Financa.Controllers
                                 Investimento investimento = new Investimento()
                                 {
                                     Id = 0,
-                                    Data = (DateTime)reader.GetValue(1),
+                                    Data = (DateTime)reader.GetValue(2),
                                     Tipo = reader.GetValue(4).ToString(),
                                     Quantidade = int.Parse(reader.GetValue(5).ToString()),
                                     PrecoCompra = decimal.Parse(reader.GetValue(6).ToString()),
@@ -399,7 +411,7 @@ namespace Financa.Controllers
 
                                 if (!InvestimentoExists(investimento.Data, investimento.PrecoCompra, investimento.Empresa, investimento.Corretora))
                                 {
-                                    investimentos.Add(investimento);
+                                    listaInvestimentos.Add(investimento);
                                 }
                             }
 
@@ -408,13 +420,21 @@ namespace Financa.Controllers
                     }
                 }
 
-                investimentos.ForEach(i => _context.Investimentos.Add(i));
+                listaInvestimentos.ForEach(i => _context.Investimentos.Add(i));
 
                 _context.SaveChanges();
             }
 
-            var applicationDbContext = _context.Investimentos.Include(i => i.Corretora).Include(i => i.Empresa);
-            return View(nameof(Index), applicationDbContext.ToList());
+            var investimentos = _context.Investimentos
+               .Include(i => i.Corretora)
+               .Include(i => i.Empresa)
+               .Where(i => i.Tipo.ToUpper() != "FUNDO DE INVESTIMENTO")
+               .OrderBy(i => i.Empresa.Ticker)
+               .ThenBy(i => i.Data);
+
+            ConfigurarObjeto(investimentos);
+
+            return View(nameof(Index),investimentos.OrderBy(i => i.Empresa.Ticker).ThenBy(i => i.Data).ToList());
         }
 
         private Empresa GravaEmpresa(IExcelDataReader reader, Empresa empresa)

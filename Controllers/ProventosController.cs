@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Financa.Data;
 using Financa.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Financa.Controllers
 {
+    [Authorize]
     public class ProventosController : Controller
     {
         private readonly ApplicationDbContext _context;
