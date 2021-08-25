@@ -78,7 +78,7 @@ namespace Financa.Controllers
             return View(provento);
         }
 
-        // GET: Proventos/Edit/5
+        // GET: Proventos/Editar/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

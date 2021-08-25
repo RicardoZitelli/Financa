@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 <link rel="stylesheet" href="~/css/site.css" />
-<h1>Index</h1>
+<h1>Investimentos</h1>
 
 <div>
     Carregar investimentos de uma planilha Excel
@@ -21,7 +21,7 @@
 </form>
 <br />
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Criar Novo</a>
 
 </p>
 <table class="table table-bordered table-striped table-hover table-responsive">
@@ -157,10 +157,10 @@
 
                     </td>
                 }
-                <td  class="text-center">
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+            <td class="text-center">
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |                
+                <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
+            </td>
             </tr>
         }
 
