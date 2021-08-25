@@ -30,17 +30,20 @@ namespace Financa.Controllers
             stringConnection = "Server=DESKTOP-UT5R5SE;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
         }
 
-        public async Task<Acao> getStockData(string symbol)
+        public async Task<Acao> ObterInformacaoDaAcao(string symbol)
         {
             Acao acao = new Acao();
 
             try
             {                
                 string ticker = symbol;
-
                 string param = ticker + ".SA";
+                IReadOnlyDictionary<string, Security> security;
 
-                var security = await Yahoo.Symbols(param).QueryAsync();
+                security = await Yahoo.Symbols(param).QueryAsync();
+
+                if (security.Values.Count() == 0)
+                    security = await Yahoo.Symbols(ticker).QueryAsync();
 
                 List<Security> securities = security.Values.ToList();
 
@@ -77,7 +80,7 @@ namespace Financa.Controllers
             
             ConfigurarObjeto(investimentos);
 
-            return View(await investimentos.OrderBy(i => i.Empresa.Ticker).ThenBy(i => i.Data).ToListAsync());
+            return View(await investimentos.ToListAsync());
         }
 
         private void ConfigurarObjeto(IOrderedQueryable<Investimento> investimentos)
@@ -95,7 +98,7 @@ namespace Financa.Controllers
 
             string ticker = "";
 
-            Task<Acao> acaoAsync = getStockData("");
+            Task<Acao> acaoAsync = ObterInformacaoDaAcao("");
 
             foreach (Investimento item in investimentos)
             {
@@ -104,7 +107,7 @@ namespace Financa.Controllers
                 {
                     ticker = item.Empresa.Ticker;
 
-                    acaoAsync = getStockData(item.Empresa.Ticker);
+                    acaoAsync = ObterInformacaoDaAcao(item.Empresa.Ticker);
                 }
 
                 Acao acao = new Acao();
@@ -370,7 +373,7 @@ namespace Financa.Controllers
         }
 
         [HttpPost]
-        public ActionResult InsereViaExcel(IFormFile file)
+        public async Task<ActionResult> InsereViaExcel(IFormFile file)
         {
             List<Investimento> listaInvestimentos = new List<Investimento>();
             if (file.Length > 0)
@@ -434,7 +437,7 @@ namespace Financa.Controllers
 
             ConfigurarObjeto(investimentos);
 
-            return View(nameof(Index),investimentos.OrderBy(i => i.Empresa.Ticker).ThenBy(i => i.Data).ToList());
+            return View(nameof(Index),await investimentos.ToListAsync());
         }
 
         private Empresa GravaEmpresa(IExcelDataReader reader, Empresa empresa)

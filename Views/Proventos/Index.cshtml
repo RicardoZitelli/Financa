@@ -22,6 +22,9 @@
                 @Html.DisplayNameFor(model => model.TotalRecebido)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.TotalRecebidoAcumulado)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.PorcentagemReferenteAoMes)
             </th>
             <th></th>
@@ -33,12 +36,16 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DataFechamento)
             </td>
-            <td>                
+            <td>
                 @{string parameterValue = @Html.FormatValue(item.ValorCarteira, "{0:C}"); }
                 @Html.DisplayFor(modelItem => parameterValue)
             </td>
-            <td>                
+            <td>
                 @{parameterValue = @Html.FormatValue(item.TotalRecebido, "{0:C}"); }
+                @Html.DisplayFor(modelItem => parameterValue)
+            </td>
+            <td>
+                @{parameterValue = @Html.FormatValue(item.TotalRecebidoAcumulado, "{0:C}"); }
                 @Html.DisplayFor(modelItem => parameterValue)
             </td>
             <td>

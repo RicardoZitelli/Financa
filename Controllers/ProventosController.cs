@@ -24,7 +24,18 @@ namespace Financa.Controllers
         // GET: Proventos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Proventos.ToListAsync());
+            var listaProventos = await _context.Proventos.ToListAsync();
+            
+            SomarTotalRecebido(listaProventos);
+
+            return View(listaProventos);
+        }
+
+        private void SomarTotalRecebido(List<Provento> listaProventos)
+        {
+            decimal totalRecebidoFinal = 0;
+
+            listaProventos.ForEach(i => { totalRecebidoFinal += i.TotalRecebido; i.TotalRecebidoAcumulado = totalRecebidoFinal; });
         }
 
         // GET: Proventos/Details/5

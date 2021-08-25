@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,5 +33,8 @@ namespace Financa.Models
         public decimal TotalRecebido { get; set; }
         [Display(Name = "Porcentagem Referente ao mês")]
         public decimal PorcentagemReferenteAoMes { get; set; }
+        [NotMapped]
+        [Display(Name = "Total Recebido (Acumulado)")]
+        public decimal TotalRecebidoAcumulado { get; set; }
     }
 }
