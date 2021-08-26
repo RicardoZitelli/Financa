@@ -83,6 +83,11 @@ namespace Financa.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var role = await _userManager.GetRolesAsync(user);
+                    TempData["Role"] = role[0].ToString();
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
