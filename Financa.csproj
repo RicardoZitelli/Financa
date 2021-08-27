@@ -12,6 +12,8 @@
     <Compile Remove="Data\Migrations\20210814204956_05.Designer.cs" />
     <Compile Remove="Data\Migrations\20210819054831_vw_Investimentos.cs" />
     <Compile Remove="Data\Migrations\20210819054831_vw_Investimentos.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210827044038_UserIdEmVwInvestimentos.cs" />
+    <Compile Remove="Data\Migrations\20210827044038_UserIdEmVwInvestimentos.Designer.cs" />
     <Compile Remove="Models\Market_Time.cs" />
     <Compile Remove="Models\Mercado.cs" />
     <Compile Remove="Models\PETR4.cs" />

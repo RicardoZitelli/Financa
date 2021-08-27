@@ -15,6 +15,7 @@ using YahooFinanceApi;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Financa.Controllers
 {
@@ -23,11 +24,14 @@ namespace Financa.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly string stringConnection;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public InvestimentosController(ApplicationDbContext context)
+
+        public InvestimentosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             stringConnection = "Server=DESKTOP-UT5R5SE;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
+            _userManager = userManager;
         }
 
         public async Task<Acao> ObterInformacaoDaAcao(string symbol)
@@ -98,14 +102,17 @@ namespace Financa.Controllers
 
             string ticker = "";
 
-            Task<Acao> acaoAsync = ObterInformacaoDaAcao("");
+        Task<Acao> acaoAsync = ObterInformacaoDaAcao("");
 
             foreach (Investimento item in investimentos)
             {
+                item.EhOPrimeiroRegistroDaEmpresa = false;
 
                 if (ticker != item.Empresa.Ticker)
                 {
                     ticker = item.Empresa.Ticker;
+
+                    item.EhOPrimeiroRegistroDaEmpresa = true;
 
                     acaoAsync = ObterInformacaoDaAcao(item.Empresa.Ticker);
                 }
@@ -204,6 +211,7 @@ namespace Financa.Controllers
                 using (SqlCommand cmd = new SqlCommand("SELECT * FROM vw_Investimentos WHERE Tipo <> 'FUNDO DE INVESTIMENTO' ORDER BY Ticker", sql))
                 {
                     cmd.CommandType = CommandType.Text;
+                                       
 
                     sql.Open();
 
@@ -220,13 +228,17 @@ namespace Financa.Controllers
                             , decimal.Parse(reader[6].ToString())
                             , double.Parse(reader[7].ToString())
                             , decimal.Parse(reader[8].ToString())
-                            , decimal.Parse(reader[9].ToString()));
+                            , decimal.Parse(reader[9].ToString())
+                            , reader[10].ToString());
 
                             listaInvestimentos.Add(investimento);
                         }
                     }
                 }
             }
+
+            listaInvestimentos.RemoveAll(i => i.UserId != _userManager.GetUserAsync(User).Result.Id);
+
             return listaInvestimentos;
         }
 
@@ -266,7 +278,8 @@ namespace Financa.Controllers
         public async Task<IActionResult> Create([Bind("Id,Data,Tipo,Quantidade,PrecoCompra,PrecoVenda,Corretagem,DataVenda,CorretoraId,EmpresaId")] Investimento investimento)
         {
             if (ModelState.IsValid)
-            {
+            {                
+                investimento.UserId = _userManager.GetUserAsync(User).Result.Id;
                 _context.Add(investimento);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

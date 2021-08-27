@@ -77,7 +77,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr style='@(item.EhOPrimeiroRegistroDaEmpresa ? "border-top:2px solid #000;" : "")'>
                 <td class="text-center">
                     @Html.DisplayFor(modelItem => item.Corretora.Descricao)
                 </td>
@@ -111,7 +111,7 @@
                     }
                     @Html.DisplayFor(modelItem => parameterValue)%
                 </td>
-                <td class="@("text-center alert-primary " + (item.Acao.RegularMarketChangePercent > 0 ? "success" : "danger"))" style="font-weight:bold">
+                <td class="@("text-center " + (item.Acao.RegularMarketChangePercent > 0 ? "success alert-success" : "alert alert-danger"))" style="font-weight:bold">
                     @{
                         var valorAtual = (item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask);
                         parameterValue = @Html.FormatValue(valorAtual, "{0:C}");
@@ -142,14 +142,14 @@
                 </td>
                 @if (item.Quantidade_Registro_Por_Acao > 0)
                 {
-                    <td rowspan="@item.Quantidade_Registro_Por_Acao" class="@("text-center " + ((item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask) > double.Parse(item.PrecoCompraMedio.ToString()) ? "success" : "danger"))" style="vertical-align: middle;background-color: #E0E0E0;border: 1px solid #C0C0C0;">
+                    <td rowspan="@item.Quantidade_Registro_Por_Acao" class="@("text-center " + ((item.Acao.Bid < item.Acao.Ask ? item.Acao.Bid : item.Acao.Ask) > double.Parse(item.PrecoCompraMedio.ToString()) ? "alert alert-success" : "alert alert-danger"))" style="vertical-align: middle;border: 1px solid #C0C0C0;">
                         @{
                             parameterValue = (item.PrecoCompraMedio).ToString("C");
                         }
                         @Html.DisplayFor(modelItem => parameterValue)
 
                     </td>
-                    <td rowspan="@item.Quantidade_Registro_Por_Acao" class="@("text-center " + (item.PerformanceFrenteAoPrecoMedio > 0 ? "success" : "danger"))" style="vertical-align: middle;background-color: #E0E0E0;border: 1px solid #C0C0C0;">
+                    <td rowspan="@item.Quantidade_Registro_Por_Acao" class="@("text-center " + (item.PerformanceFrenteAoPrecoMedio > 0 ? "alert alert-success" : "alert alert-danger"))" style="vertical-align: middle;border: 1px solid #C0C0C0;">
                         @{
                             parameterValue = (item.PerformanceFrenteAoPrecoMedio).ToString("C");
                         }

@@ -57,6 +57,7 @@ namespace Financa.Models
         public int? EmpresaId { get; set; }        
         public Corretora Corretora { get; set; }
         public Empresa Empresa { get; set; }
+        public string UserId { get; set; }
         [NotMappedAttribute]
         public IFormFile FileUpload { get; set; }
         [NotMapped]
@@ -99,6 +100,8 @@ namespace Financa.Models
         public double Valor_Total_ValorizacaoPorcentual { get; set; }
         [NotMapped]        
         public double Valor_Total_LucroPrejuizoReferentePrecoMedio { get; set; }
+        [NotMapped]
+        public bool EhOPrimeiroRegistroDaEmpresa { get; set; }
 
     }
 }

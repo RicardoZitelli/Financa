@@ -13,7 +13,7 @@ namespace Financa.Data
             : base(options)
         {
         }
-
+                
         public DbSet<Corretora> Corretoras { get; set; }
         public DbSet<Empresa> Empresas { get; set; }
         public DbSet<EmpresaTipo> EmpresaTipos { get; set; }

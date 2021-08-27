@@ -13,7 +13,7 @@ namespace Financa.Models
         {
         }
 
-        public vw_Investimentos(int id, DateTime data, string ticker, string tipo, int quantidade, decimal precoCompra, decimal valor_Total, double porcentagem, decimal corretagem, decimal valor_Total_Investimento)
+        public vw_Investimentos(int id, DateTime data, string ticker, string tipo, int quantidade, decimal precoCompra, decimal valor_Total, double porcentagem, decimal corretagem, decimal valor_Total_Investimento, string userId)
         {
             Id = id;
             Data = data;
@@ -25,6 +25,7 @@ namespace Financa.Models
             Porcentagem = porcentagem;
             Corretagem = corretagem;
             Valor_Total_Investimento = valor_Total_Investimento;
+            UserId = userId;
         }
 
         public int Id { get; set; }
@@ -37,5 +38,6 @@ namespace Financa.Models
         public double Porcentagem { get; set; }
         public decimal Corretagem { get; set; }
         public decimal Valor_Total_Investimento { get; set; }
+        public string UserId { get; set; }
     }
 }
