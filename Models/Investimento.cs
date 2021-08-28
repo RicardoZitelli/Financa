@@ -102,6 +102,8 @@ namespace Financa.Models
         public double Valor_Total_LucroPrejuizoReferentePrecoMedio { get; set; }
         [NotMapped]
         public bool EhOPrimeiroRegistroDaEmpresa { get; set; }
+        [NotMapped]
+        public string Ifix { get; set; }
 
     }
 }

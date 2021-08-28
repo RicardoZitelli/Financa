@@ -34,7 +34,7 @@ namespace Financa.Controllers
             _userManager = userManager;
         }
 
-        public async Task<Acao> ObterInformacaoDaAcao(string symbol)
+        private async Task<Acao> ObterInformacaoDaAcao(string symbol)
         {
             Acao acao = new Acao();
 
@@ -81,7 +81,7 @@ namespace Financa.Controllers
                 .Where(i => i.Tipo.ToUpper() != "FUNDO DE INVESTIMENTO")
                 .OrderBy(i => i.Empresa.Ticker)
                 .ThenBy(i => i.Data);
-            
+                        
             ConfigurarObjeto(investimentos);
 
             return View(await investimentos.ToListAsync());
@@ -100,13 +100,16 @@ namespace Financa.Controllers
         {
             var vw_investimento = vw_Investimentos();
 
-            string ticker = "";
+            string ticker = "IFIX";
+            bool primeiraVez = true;
 
-        Task<Acao> acaoAsync = ObterInformacaoDaAcao("");
+        Task<Acao> acaoAsync = ObterInformacaoDaAcao(ticker);
 
             foreach (Investimento item in investimentos)
             {
                 item.EhOPrimeiroRegistroDaEmpresa = false;
+
+                primeiraVez = ObtemValorIFIX(primeiraVez, item,acaoAsync);
 
                 if (ticker != item.Empresa.Ticker)
                 {
@@ -142,6 +145,18 @@ namespace Financa.Controllers
 
                 }
             }
+        }
+
+        private bool ObtemValorIFIX(bool primeiraVez, Investimento item, Task<Acao> acaoAsync)
+        {
+            if (primeiraVez)
+            {
+                primeiraVez = false;
+                                
+                item.Ifix = acaoAsync.Result.AverageVolume.ToString("n2") + " (" + acaoAsync.Result.RegularMarketChangePercent.ToString("n2") + ")" ;
+            }
+
+            return primeiraVez;
         }
 
         private static void InsereValoresNoUltimoRegistroDeCadaEmpresa(List<Investimento> investimentos)
