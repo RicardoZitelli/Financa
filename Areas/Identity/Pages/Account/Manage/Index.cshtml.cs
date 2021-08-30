@@ -21,7 +21,7 @@ namespace Financa.Areas.Identity.Pages.Account.Manage
             _userManager = userManager;
             _signInManager = signInManager;
         }
-
+        [Display(Name = "E-mail")]
         public string Username { get; set; }
 
         [TempData]
@@ -33,7 +33,7 @@ namespace Financa.Areas.Identity.Pages.Account.Manage
         public class InputModel
         {
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Telefone/Celular")]
             public string PhoneNumber { get; set; }
         }
 

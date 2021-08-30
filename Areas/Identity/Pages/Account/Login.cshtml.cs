@@ -43,14 +43,16 @@ namespace Financa.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [Display(Name = "E-mail")]
             [EmailAddress]
             public string Email { get; set; }
 
             [Required]
+            [Display(Name = "Senha")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = "Lembre-se de mim")]
             public bool RememberMe { get; set; }
         }
 
@@ -96,12 +98,12 @@ namespace Financa.Areas.Identity.Pages.Account
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("User account locked out.");
+                    _logger.LogWarning("Conta bloqueada.");
                     return RedirectToPage("./Lockout");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Login inválido");
                     return Page();
                 }
             }

@@ -3,59 +3,62 @@
 @{
     ViewData["Title"] = "Index";
 }
+<div class="container">
 
-<h1>Proventos</h1>
+    <h1>Proventos</h1>
 
-<p>
-    <a asp-action="Create">Criar Novo</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DataFechamento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorCarteira)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalRecebido)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalRecebidoAcumulado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PorcentagemReferenteAoMes)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataFechamento)
-            </td>
-            <td>
-                @{string parameterValue = @Html.FormatValue(item.ValorCarteira, "{0:C}"); }
-                @Html.DisplayFor(modelItem => parameterValue)
-            </td>
-            <td>
-                @{parameterValue = @Html.FormatValue(item.TotalRecebido, "{0:C}"); }
-                @Html.DisplayFor(modelItem => parameterValue)
-            </td>
-            <td>
-                @{parameterValue = @Html.FormatValue(item.TotalRecebidoAcumulado, "{0:C}"); }
-                @Html.DisplayFor(modelItem => parameterValue)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PorcentagemReferenteAoMes)%
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |                
-                <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <p>
+        <a asp-action="Create">Criar Novo</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DataFechamento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ValorCarteira)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalRecebido)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalRecebidoAcumulado)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PorcentagemReferenteAoMes)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataFechamento)
+                    </td>
+                    <td>
+                        @{string parameterValue = @Html.FormatValue(item.ValorCarteira, "{0:C}"); }
+                        @Html.DisplayFor(modelItem => parameterValue)
+                    </td>
+                    <td>
+                        @{parameterValue = @Html.FormatValue(item.TotalRecebido, "{0:C}"); }
+                        @Html.DisplayFor(modelItem => parameterValue)
+                    </td>
+                    <td>
+                        @{parameterValue = @Html.FormatValue(item.TotalRecebidoAcumulado, "{0:C}"); }
+                        @Html.DisplayFor(modelItem => parameterValue)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PorcentagemReferenteAoMes)%
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

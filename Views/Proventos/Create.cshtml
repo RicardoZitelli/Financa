@@ -3,44 +3,46 @@
 @{
     ViewData["Title"] = "Create";
 }
+<div class="container">
 
-<h1>Criar</h1>
+    <h1>Criar</h1>
 
-<h4>Provento</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DataFechamento" class="control-label"></label>
-                <input asp-for="DataFechamento" class="form-control" />
-                <span asp-validation-for="DataFechamento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ValorCarteira" class="control-label"></label>
-                <input asp-for="ValorCarteira" class="form-control" onblur="porcentagem();"/>
-                <span asp-validation-for="ValorCarteira" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalRecebido" class="control-label"></label>
-                <input asp-for="TotalRecebido" class="form-control" onblur="porcentagem();"/>
-                <span asp-validation-for="TotalRecebido" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PorcentagemReferenteAoMes" class="control-label"></label>
-                <input id="PorcentagemReferenteAoMes" asp-for="PorcentagemReferenteAoMes" class="form-control" onfocus="porcentagem();"/>
-                <span asp-validation-for="PorcentagemReferenteAoMes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Criar" class="btn btn-primary" />
-            </div>
-        </form>
+    <h4>Provento</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="DataFechamento" class="control-label"></label>
+                    <input asp-for="DataFechamento" class="form-control" />
+                    <span asp-validation-for="DataFechamento" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ValorCarteira" class="control-label"></label>
+                    <input asp-for="ValorCarteira" class="form-control" onblur="porcentagem();" />
+                    <span asp-validation-for="ValorCarteira" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TotalRecebido" class="control-label"></label>
+                    <input asp-for="TotalRecebido" class="form-control" onblur="porcentagem();" />
+                    <span asp-validation-for="TotalRecebido" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PorcentagemReferenteAoMes" class="control-label"></label>
+                    <input id="PorcentagemReferenteAoMes" asp-for="PorcentagemReferenteAoMes" class="form-control" onfocus="porcentagem();" />
+                    <span asp-validation-for="PorcentagemReferenteAoMes" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Criar" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Voltar para  a Lista</a>
+    <div>
+        <a asp-action="Index">Voltar para  a Lista</a>
+    </div>
 </div>
 
 @section Scripts {
@@ -51,7 +53,7 @@
 <script>
     function porcentagem() {
         var porcentagem = $("#TotalRecebido").val().toString().replace(',', '.') / $("#ValorCarteira").val().toString().replace(',', '.') * 100;
-        
+
         $("#PorcentagemReferenteAoMes").val(porcentagem.toString().replace('.', ',').substring(0, 4));
     }
 </script>

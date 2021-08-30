@@ -3,17 +3,19 @@
 }
 
 
+<div class="container">
 
-<div style="position:relative">
-    <div id="chartValorInvestido" style="height: 370px; width:49%; position:absolute;left:0;border: 1px solid #000"></div>
+    <div style="position:relative">
+        <div id="chartValorInvestido" style="height: 370px; width:49%; position:absolute;left:0;border: 1px solid #000"></div>
 
-    <div id="chartQuantidadeAcoesEmpresa" style="height: 370px; width:49%;position:absolute; right:0;border: 1px solid #000;margin-left:10px;"></div>
+        <div id="chartQuantidadeAcoesEmpresa" style="height: 370px; width:49%;position:absolute; right:0;border: 1px solid #000;margin-left:10px;"></div>
+    </div>
+
 </div>
 
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
-<script>
+    <script>
 window.onload = function () {
 
     var chart = new CanvasJS.Chart("chartValorInvestido", {
@@ -59,4 +61,4 @@ window.onload = function () {
 chart.render();
 
 }
-</script>
+    </script>
