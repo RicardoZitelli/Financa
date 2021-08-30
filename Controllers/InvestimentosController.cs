@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Financa.Data;
 using Financa.Models;
 using Microsoft.AspNetCore.Http;
-using System.IO;
-
 using ExcelDataReader;
 using YahooFinanceApi;
 using Microsoft.Data.SqlClient;
