@@ -13,7 +13,7 @@ namespace Financa.Controllers
         JsonSerializerSettings _jsonSetting = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore };
         public DataPointsController()
         {
-            stringConnection = "Server=DESKTOP-UT5R5SE;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
+            stringConnection = "Server=DESKTOP-PPM8K3Q\\SQLEXPRESS;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
         }
 
         public IActionResult Index()

@@ -38,4 +38,6 @@
     <PackageReference Include="YahooFinanceApi" Version="2.1.2" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>

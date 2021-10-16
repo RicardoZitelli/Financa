@@ -7,7 +7,10 @@ namespace Financa.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             string procedure = @" 
-                                    ALTER VIEW dbo.vw_carteira  
+                                    IF EXISTS(SELECT 1 FROM SYS.VIEWS WHERE NAME='vw_carteira' AND TYPE='v')
+                                    DROP VIEW vw_carteira 
+                                    GO
+                                    CREATE VIEW dbo.vw_carteira  
                                     AS  
                                     SELECT	c.Descricao  
                                     		, CAST(MONTH(i.data) AS VARCHAR(2)) + '/' + CAST(YEAR(i.data) AS VARCHAR(4)) [Mês/Ano]  
@@ -27,8 +30,11 @@ namespace Financa.Data.Migrations
 
 
                                     GO
-
-                                    ALTER VIEW dbo.vw_TotalInvestidoPorEmpresa  
+                                    
+                                    IF EXISTS(SELECT 1 FROM SYS.VIEWS WHERE NAME='vw_TotalInvestidoPorEmpresa' AND TYPE='v')
+                                    DROP VIEW vw_TotalInvestidoPorEmpresa 
+                                    GO
+                                    CREATE VIEW dbo.vw_TotalInvestidoPorEmpresa  
                                     AS  
                                     SELECT Empresa,SUM([Preço de Compra])[Total Investido],SUM([Quantidade]) [Quantidade], UserId,  UserName
                                     FROM vw_carteira  

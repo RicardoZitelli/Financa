@@ -28,7 +28,7 @@ namespace Financa.Controllers
         public InvestimentosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
-            stringConnection = "Server=DESKTOP-UT5R5SE;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
+            stringConnection = "Server=DESKTOP-PPM8K3Q\\SQLEXPRESS;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
             _userManager = userManager;
         }
 
@@ -79,8 +79,11 @@ namespace Financa.Controllers
                 .Where(i => i.Tipo.ToUpper() != "FUNDO DE INVESTIMENTO")
                 .OrderBy(i => i.Empresa.Ticker)
                 .ThenBy(i => i.Data);
-                        
-            ConfigurarObjeto(investimentos);
+
+            if (investimentos.Count() > 0)
+            {
+                ConfigurarObjeto(investimentos);
+            }
 
             return View(await investimentos.ToListAsync());
         }
@@ -435,7 +438,8 @@ namespace Financa.Controllers
                                     CorretoraId = corretora.Id,
                                     EmpresaId = empresa.Id,
                                     Corretora = corretora,
-                                    Empresa = empresa
+                                    Empresa = empresa,
+                                    UserId = _userManager.GetUserAsync(User).Result.Id
                                 };
 
                                 if (!InvestimentoExists(investimento.Data, investimento.PrecoCompra, investimento.Empresa, investimento.Corretora))
