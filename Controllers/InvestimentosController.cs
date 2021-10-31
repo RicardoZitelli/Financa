@@ -477,8 +477,8 @@ namespace Financa.Controllers
                 empresa = new Empresa()
                 {
                     Id = 0,
-                    Ticker = reader.GetValue(1).ToString(),
-                    Nome = reader.GetValue(1).ToString(),
+                    Ticker = reader.GetValue(3).ToString(),
+                    Nome = reader.GetValue(3).ToString(),
 
                 };
 
