@@ -14,6 +14,7 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Financa.Util;
 
 namespace Financa.Controllers
 {
@@ -419,8 +420,8 @@ namespace Financa.Controllers
                         {
                             if (!cabecalho)
                             {
-                                var corretora = _context.Corretoras.Where(c => c.Descricao == reader.GetValue(0).ToString()).FirstOrDefault();
-                                var empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue(3).ToString()).FirstOrDefault();
+                                var corretora = _context.Corretoras.Where(c => c.Descricao == reader.GetValue((int)Excel.CORRETORA).ToString()).FirstOrDefault();
+                                var empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue((int)Excel.EMPRESA).ToString()).FirstOrDefault();
 
                                 empresa = GravaEmpresa(reader, empresa);
                                 corretora = GravaCorretora(reader, corretora);
@@ -428,10 +429,10 @@ namespace Financa.Controllers
                                 Investimento investimento = new Investimento()
                                 {
                                     Id = 0,
-                                    Data = (DateTime)reader.GetValue(2),
-                                    Tipo = reader.GetValue(4).ToString(),
-                                    Quantidade = int.Parse(reader.GetValue(5).ToString()),
-                                    PrecoCompra = decimal.Parse(reader.GetValue(6).ToString()),
+                                    Data = (DateTime)reader.GetValue((int)Excel.DATA),
+                                    Tipo = reader.GetValue((int)Excel.EMPRESA).ToString(),
+                                    Quantidade = int.Parse(reader.GetValue((int)Excel.QUANTIDADE).ToString()),
+                                    PrecoCompra = decimal.Parse(reader.GetValue((int)Excel.PRECO_COMPRA).ToString()),
                                     PrecoVenda = 0,
                                     Corretagem = 0,
                                     DataVenda = null,
@@ -477,15 +478,15 @@ namespace Financa.Controllers
                 empresa = new Empresa()
                 {
                     Id = 0,
-                    Ticker = reader.GetValue(3).ToString(),
-                    Nome = reader.GetValue(3).ToString(),
+                    Ticker = reader.GetValue((int)Excel.EMPRESA).ToString(),
+                    Nome = reader.GetValue((int)Excel.EMPRESA).ToString(),
 
                 };
 
                 _context.Add(empresa);
                 _context.SaveChanges();
 
-                empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue(1).ToString()).FirstOrDefault();
+                empresa = _context.Empresas.Where(e => e.Ticker == reader.GetValue((int)Excel.EMPRESA).ToString()).FirstOrDefault();
             }
 
             return empresa;
@@ -498,13 +499,13 @@ namespace Financa.Controllers
                 corretora = new Corretora()
                 {
                     Id = 0,
-                    Descricao = reader.GetValue(1).ToString()
+                    Descricao = reader.GetValue((int)Excel.CORRETORA).ToString()
                 };
 
                 _context.Add(corretora);
                 _context.SaveChanges();
 
-                corretora = _context.Corretoras.Where(e => e.Descricao == reader.GetValue(1).ToString()).FirstOrDefault();
+                corretora = _context.Corretoras.Where(e => e.Descricao == reader.GetValue((int)Excel.CORRETORA).ToString()).FirstOrDefault();
             }
 
             return corretora;
