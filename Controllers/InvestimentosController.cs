@@ -15,6 +15,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Financa.Util;
+using Microsoft.Extensions.Configuration;
 
 namespace Financa.Controllers
 {
@@ -26,10 +27,10 @@ namespace Financa.Controllers
         private readonly UserManager<IdentityUser> _userManager;
 
 
-        public InvestimentosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public InvestimentosController(ApplicationDbContext context, UserManager<IdentityUser> userManager,IConfiguration config)
         {
             _context = context;
-            stringConnection = "Server=DESKTOP-PPM8K3Q\\SQLEXPRESS;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
+            stringConnection = config.GetConnectionString("DefaultConnection");
             _userManager = userManager;
         }
 

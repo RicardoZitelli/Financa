@@ -1,6 +1,7 @@
 ﻿using Financa.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Data;
@@ -8,12 +9,13 @@ using System.Data;
 namespace Financa.Controllers
 {
     public class DataPointsController : Controller
-    {
+    {                      
         private readonly string stringConnection;
         JsonSerializerSettings _jsonSetting = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore };
-        public DataPointsController()
-        {
-            stringConnection = "Server=DESKTOP-PPM8K3Q\\SQLEXPRESS;Database=Financa;Trusted_Connection=True;MultipleActiveResultSets=true";
+        public DataPointsController(IConfiguration config)
+        {         
+            stringConnection = config.GetConnectionString("DefaultConnection");
+            
         }
 
         public IActionResult Index()
