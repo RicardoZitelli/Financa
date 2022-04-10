@@ -106,7 +106,7 @@ namespace Financa.Controllers
             string ticker = "IFIX";
             bool primeiraVez = true;
 
-        Task<Acao> acaoAsync = ObterInformacaoDaAcao(ticker);
+            Task<Acao> acaoAsync = ObterInformacaoDaAcao(ticker);
 
             foreach (Investimento item in investimentos)
             {
@@ -214,9 +214,9 @@ namespace Financa.Controllers
             decimal corretagem = decimal.Parse(investimentos.Sum(i => i.Corretagem).ToString());
 
             item.Valor_Total_Valorizacao = valor_Total_Investido_Atual- valor_Total_Investido;
-
-            item.Valor_Total_ValorizacaoPorcentual = double.Parse(((((valor_Total_Investido_Atual - corretagem) / valor_Total_Investido) - 1) * 100).ToString());
-            
+                        
+            item.Valor_Total_ValorizacaoPorcentual = double.Parse(((((valor_Total_Investido_Atual - corretagem) / valor_Total_Investido == 0 ? 1 : valor_Total_Investido) - 1) * 100).ToString());
+                        
             item.Valor_Total_LucroPrejuizoReferentePrecoMedio = investimentos.ToList().Sum(i => i.PerformanceFrenteAoPrecoMedio);
         }
 
