@@ -1,3 +1,5 @@
+CREATE DATABASE Financa
+GO
 USE [Financa]
 GO
 /****** Object:  Table [dbo].[AspNetUsers]    Script Date: 10/04/2022 16:01:45 ******/

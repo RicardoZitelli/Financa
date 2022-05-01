@@ -35,7 +35,7 @@ GO
 INSERT INTO AspNetUserRoles VALUES ('d42f5fdb-04d9-4139-bb28-d69b71cf5131','2B125F00-D89B-4917-BBBD-FFA5A11CB83F')
 GO
 
-/*In case of you have already created the user, utilize the script below*/
+/*In case of you have already created the user, use the script below*/
 /*Caso você já tenha criado o usuário, utilize o script abaixo*/
 
 /*
