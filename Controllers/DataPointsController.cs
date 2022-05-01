@@ -52,7 +52,6 @@ namespace Financa.Controllers
 
                         ViewBag.TotalPorEmpresa = JsonConvert.SerializeObject(dataPoint);
                     }
-
                 }
             }
         }
